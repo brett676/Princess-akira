@@ -1,0 +1,9 @@
+{
+  "name": "princess-akira",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Princess Akira and the Missing King: a static choose-your-path game",
+  "scripts": {
+    "build": "echo \"Static site, nothing to build\""
+  }
+}

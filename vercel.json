@@ -1,13 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "echo \"No install needed\"",
+  "buildCommand": "echo \"Static site, nothing to build\"",
+  "outputDirectory": "public",
   "rewrites": [
-    {
-      "source": "/game",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/game/",
-      "destination": "/index.html"
-    }
+    { "source": "/game", "destination": "/index.html" },
+    { "source": "/game/", "destination": "/index.html" }
   ]
 }

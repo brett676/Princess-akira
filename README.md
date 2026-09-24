@@ -8,8 +8,8 @@ choosing at random wins about 40% of the time.
 
 ## Files
 
-- `index.html`: the whole game (HTML, CSS and JS in one file, no build step).
-- `vercel.json`: serves the game at both `/` and `/game`.
+- `public/index.html`: the whole game (HTML, CSS and JS in one file, no build step).
+- `vercel.json`: pins the Vercel settings (no framework, no build, output `public/`) and serves the game at both `/` and `/game`.
 
 ## Deploying on Vercel
 
