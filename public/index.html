@@ -614,7 +614,7 @@
           w: "Asking “why?” helps us understand people. Most unkind behaviour comes from a feeling underneath." }
       ] },
     { land: 4, title: "The Final Choice",
-      text: ["With the thorn magic fading, the vines fall away and the King steps free. The brothers' own vines have tangled them up in a big, grumpy knot. The King turns to Akira. “You saved me, my brave girl. So you shall decide what happens to your brothers.”"],
+      text: ["With the thorn magic fading, the vines fall away and the King steps free. The brothers' own vines have tangled them up in a big, grumpy knot. King Brett turns to Akira. “You saved me, my brave girl. So you shall decide what happens to your brothers.”"],
       ask: "What does Akira decide?",
       choices: [
         { t: "“Lock them in the dungeon forever!”", ok: false,
@@ -752,7 +752,7 @@
       '<div class="card-body">' +
       '<div class="title-hero"><span class="kicker">A choose-your-path adventure</span>' +
       '<h1>Princess Akira <em>and the Missing King</em></h1></div>' +
-      '<p class="story">The King of Harmony Hills has vanished! His naughty sons, <strong>B and B</strong>, have whisked him away to their secret tower. Only one pony can bring him home: brave Princess Akira.</p>' +
+      '<p class="story">King Brett of Varsity Hills has vanished! His naughty sons, <strong>B and B</strong>, have whisked him away to their secret tower. Only one pony can bring him home: brave Princess Akira.</p>' +
       '<div class="howto"><p><strong>How to play:</strong> On every page, you choose what Akira does. There are ' + SCENES.length + ' choices on the way to the tower.</p>' +
       '<div class="legend"><span class="pill good">Kind, brave or wise: ' + STEP_CLOSER + ' leagues closer</span><span class="pill bad">Unwise: ' + STEP_AWAY + ' league further away</span></div>' +
       '<p>The King starts <strong>' + START_LEAGUES + ' leagues</strong> away. Reach him by the last page to save him!</p></div>' +
@@ -830,7 +830,7 @@
     var title, story, art = won ? 4 : 3;
     if (won && forgave) {
       title = "Happily Ever Harmony";
-      story = ["Princess Akira rides home with the King beside her, and B and B trotting behind, carrying a big basket of apology cupcakes.", "That night there is a feast in the Great Hall. Clover and her mum, Grumbletoll, Marlo, Oona, Flit and even Smoulder the dragon are all invited. B and B fix Farmer Haybale's fence the very next morning.", "The King raises his cup. “To Akira, who saved a king with kindness, and saved a family with forgiveness.” And everyone cheers."];
+      story = ["Princess Akira rides home with the King beside her, and B and B trotting behind, carrying a big basket of apology cupcakes.", "That night there is a feast in the Great Hall. Clover and her mum, Grumbletoll, Marlo, Oona, Flit and even Smoulder the dragon are all invited. B and B fix Farmer Haybale's fence the very next morning.", "King Brett raises his cup. “To Akira, who saved a king with kindness, and saved a family with forgiveness.” And everyone cheers."];
     } else if (won) {
       title = "The King Comes Home";
       story = ["Princess Akira rides home with the King, and the whole kingdom cheers! B and B are led away to the dungeon.", "That night, the King tucks Akira in. “You were so brave,” he says. “But I miss your brothers. A kingdom is strongest when people get a chance to put things right.”", "Maybe tomorrow, Akira thinks, she'll visit them and hear their side of the story. Can you find the happiest ending?"];
@@ -840,7 +840,7 @@
     }
     var total = SCENES.length;
     var badge = state.good >= 30 ? ["🌟", "Heart of Starlight", "Almost every choice was kind, brave and wise!"]
-      : state.good >= 24 ? ["🌈", "Rainbow Hero", "A true hero of Harmony Hills."]
+      : state.good >= 24 ? ["🌈", "Rainbow Hero", "A true hero of Varsity Hills."]
       : state.good >= 15 ? ["🦄", "Brave Helper", "You're learning the ways of a great princess."]
       : ["🌱", "Growing Legend", "Every quest makes you wiser. Try again!"];
     var learned = state.picks.filter(function (p) { return SCENES[p.i].choices[p.c].ok; })
