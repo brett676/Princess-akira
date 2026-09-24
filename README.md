@@ -20,3 +20,10 @@ redeploys automatically.
 To use it at loveakira.com/game, keep LoveAkira.com where it is and add a
 redirect from its `/game` page to this Vercel site, or add a subdomain such
 as `game.loveakira.com` to this Vercel project under Settings, Domains.
+
+## Princess Oona version
+
+`princess-oona/` is the same game retold for Princess Oona, King Giovanni
+and Uncles Bayzen and Bastien. It is a separate Vercel project: import this
+repo again, name the project `princess-oona` and set Root Directory to
+`princess-oona`.
