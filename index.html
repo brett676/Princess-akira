@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Princess Akira's Rescue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@600;800&family=Nunito:wght@500;700;800&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #3b2a5c;
+    --ink-soft: #6a5a8c;
+    --paper: #fffaff;
+    --lavender: #b18cf0;
+    --lavender-pale: #efe6ff;
+    --pink: #ff6fb5;
+    --pink-pale: #ffe3f1;
+    --gold: #ffc93c;
+    --gold-deep: #e39b00;
+    --mint: #52caa4;
+    --mint-pale: #dcf7ee;
+    --berry: #d9486f;
+    --berry-pale: #ffe2e8;
+    --sky-a: #bfe3ff;
+    --sky-b: #ffd6ef;
+    --display: "Grandstander", "Comic Sans MS", "Chalkboard SE", system-ui, sans-serif;
+    --body: "Nunito", "Trebuchet MS", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    margin: 0;
+    font-family: var(--body);
+    color: var(--ink);
+    background: linear-gradient(170deg, var(--sky-a) 0%, #e3dcff 45%, var(--sky-b) 100%) fixed;
+    padding-inline: 16px;
+    padding-block: 18px 40px;
+    font-size: 18px;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+  h1, h2, h3 { font-family: var(--display); line-height: 1.15; text-wrap: balance; margin: 0; }
+  button { font: inherit; color: inherit; }
+  button:focus-visible { outline: 4px solid var(--gold); outline-offset: 3px; }
+
+  /* Floating clouds and sparkles in the sky */
+  .sky { position: fixed; inset: 0; pointer-events: none; z-index: -1; overflow: hidden; }
+  .cloud { position: absolute; background: #fff; border-radius: 999px; opacity: .75; }
+  .cloud::before, .cloud::after { content: ""; position: absolute; background: #fff; border-radius: 50%; }
+  .cloud::before { width: 55%; height: 160%; left: 15%; top: -70%; }
+  .cloud::after { width: 40%; height: 130%; right: 12%; top: -45%; }
+  .c1 { width: 160px; height: 40px; top: 8%; left: -40px; animation: drift 60s linear infinite; }
+  .c2 { width: 110px; height: 30px; top: 30%; right: -30px; animation: drift 80s linear infinite reverse; }
+  .c3 { width: 200px; height: 50px; bottom: 12%; left: 20%; animation: drift 95s linear infinite; }
+  @keyframes drift { from { transform: translateX(-10vw); } to { transform: translateX(10vw); } }
+
+  /* HUD */
+  .hud {
+    background: rgba(255,255,255,.82);
+    border: 3px solid #fff;
+    border-radius: 22px;
+    padding: 12px 16px 14px;
+    box-shadow: 0 6px 0 rgba(177,140,240,.35);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .hud-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .land { font-family: var(--display); font-weight: 800; font-size: 1.05rem; }
+  .page { font-size: .85rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .track-label { display: flex; justify-content: space-between; font-size: .8rem; font-weight: 800; color: var(--ink-soft); }
+  .track {
+    position: relative; height: 26px; border-radius: 999px;
+    background: linear-gradient(90deg, #ffd1d1, #ffe9b3, #fff7a8, #cff5c8, #c7e6ff, #e1d0ff);
+    border: 3px solid #fff; box-shadow: inset 0 2px 4px rgba(59,42,92,.15);
+  }
+  .track .king { position: absolute; right: -6px; top: 50%; transform: translateY(-50%); font-size: 26px; line-height: 1; }
+  .track .me {
+    position: absolute; top: 50%; width: 38px; height: 38px; transform: translate(-50%, -50%);
+    transition: left .9s cubic-bezier(.5,1.6,.5,1);
+  }
+  .dist { font-weight: 800; font-size: .95rem; text-align: center; font-variant-numeric: tabular-nums; }
+  .dist b { color: var(--pink); font-family: var(--display); font-size: 1.15rem; }
+
+  /* Storybook card */
+  .card {
+    background: var(--paper);
+    border-radius: 28px;
+    border: 4px solid #fff;
+    box-shadow: 0 10px 0 rgba(177,140,240,.45), 0 20px 40px rgba(59,42,92,.12);
+    overflow: hidden;
+  }
+  .art { display: block; width: 100%; height: auto; aspect-ratio: 16 / 7; max-width: 100%; }
+  .card-body { padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .kicker { font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--lavender); }
+  .card h2 { font-size: clamp(1.5rem, 4.8vw, 2.05rem); font-weight: 800; color: var(--ink); }
+  .story { margin: 0; max-width: 62ch; }
+  .story + .story { margin-top: -4px; }
+  .ask { font-weight: 800; color: var(--pink); margin: 0; }
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice {
+    text-align: left; cursor: pointer;
+    background: var(--lavender-pale); border: 3px solid var(--lavender);
+    border-radius: 18px; padding: 12px 16px; font-weight: 700; font-size: 1.02rem;
+    box-shadow: 0 4px 0 var(--lavender);
+    transition: transform .12s, box-shadow .12s, background .12s;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .choice .letter {
+    flex: none; width: 30px; height: 30px; border-radius: 50%;
+    background: var(--lavender); color: #fff; font-family: var(--display);
+    display: grid; place-items: center; font-size: .95rem; margin-top: 1px;
+  }
+  .choice:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 6px 0 var(--lavender); }
+  .choice:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--lavender); }
+
+  .result { border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; border: 3px solid; }
+  .result.good { background: var(--mint-pale); border-color: var(--mint); }
+  .result.bad { background: var(--berry-pale); border-color: var(--berry); }
+  .result h3 { font-size: 1.25rem; }
+  .result.good h3 { color: #1f8a68; }
+  .result.bad h3 { color: var(--berry); }
+  .picked { font-size: .9rem; font-weight: 800; color: var(--ink-soft); margin: 0; }
+  .wisdom { background: #fff; border-radius: 14px; padding: 10px 14px; font-weight: 700; margin: 0; }
+  .wisdom span { font-family: var(--display); color: var(--gold-deep); font-weight: 800; display: block; font-size: .85rem; letter-spacing: .06em; text-transform: uppercase; }
+
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .btn {
+    cursor: pointer; border: 0; border-radius: 999px; padding: 14px 26px;
+    font-family: var(--display); font-weight: 800; font-size: 1.15rem;
+    background: var(--pink); color: #fff; box-shadow: 0 5px 0 #c9447f;
+    transition: transform .12s, box-shadow .12s;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 7px 0 #c9447f; }
+  .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #c9447f; }
+  .btn.ghost { background: #fff; color: var(--ink); box-shadow: 0 5px 0 var(--lavender); border: 3px solid var(--lavender); padding: 11px 20px; font-size: 1rem; }
+  .btn.small { padding: 8px 14px; font-size: .9rem; }
+
+  .speak { cursor: pointer; background: #fff; border: 2px solid var(--lavender); border-radius: 999px; padding: 6px 12px; font-weight: 800; font-size: .85rem; color: var(--ink-soft); align-self: flex-start; }
+
+  /* Title page */
+  .title-hero { text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+  .title-hero h1 { font-size: clamp(2.1rem, 8vw, 3.4rem); font-weight: 800; color: var(--ink); }
+  .title-hero h1 em { font-style: normal; color: var(--pink); display: block; }
+  .howto { background: var(--pink-pale); border-radius: 18px; padding: 14px 18px; display: grid; gap: 6px; }
+  .howto p { margin: 0; }
+  .legend { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pill { border-radius: 999px; padding: 4px 12px; font-weight: 800; font-size: .9rem; }
+  .pill.good { background: var(--mint-pale); color: #1f8a68; border: 2px solid var(--mint); }
+  .pill.bad { background: var(--berry-pale); color: var(--berry); border: 2px solid var(--berry); }
+  details.grownups { font-size: .92rem; color: var(--ink-soft); }
+  details.grownups summary { cursor: pointer; font-weight: 800; }
+  details.grownups ul { margin: 8px 0 0; padding-left: 20px; columns: 2 220px; }
+
+  /* Ending */
+  .badge { display: grid; place-items: center; gap: 4px; text-align: center; background: linear-gradient(135deg, #fff5c7, #ffe0f0); border-radius: 20px; padding: 14px; border: 3px dashed var(--gold); }
+  .badge .medal { font-size: 44px; line-height: 1; }
+  .badge strong { font-family: var(--display); font-size: 1.3rem; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; }
+  .stat { background: var(--lavender-pale); border-radius: 16px; padding: 10px 6px; }
+  .stat b { display: block; font-family: var(--display); font-size: 1.6rem; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .stat span { font-size: .8rem; font-weight: 800; color: var(--ink-soft); }
+  .lessons { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: .95rem; }
+  .muted { color: var(--ink-soft); font-size: .9rem; margin: 0; }
+
+  /* Sparkles */
+  .spark { position: fixed; pointer-events: none; font-size: 22px; z-index: 50; animation: pop 1.2s ease-out forwards; }
+  @keyframes pop { 0% { transform: translate(0,0) scale(.4); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(1.1) rotate(180deg); opacity: 0; } }
+  .fade-in { animation: fadeUp .45s ease-out; }
+  @keyframes fadeUp { from { transform: translateY(10px); opacity: .3; } to { transform: none; opacity: 1; } }
+  .bob { animation: bob 2.4s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+  @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+  @media (max-width: 480px) {
+    body { font-size: 17px; }
+    .card-body { padding: 16px 16px 20px; }
+    .stats { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="sky" aria-hidden="true"><div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div></div>
+<main class="wrap" id="app"></main>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- The story ----------
+  // Each page has one decision. ok:true choices bring Akira 2 leagues closer to the King;
+  // ok:false choices let B and B carry him 1 league further away.
+  var START_LEAGUES = 12, STEP_CLOSER = 2, STEP_AWAY = 1;
+
+  var LANDS = [
+    { name: "Sunpetal Meadow", sky: ["#bfe3ff", "#fff1c9"], ground: "#9be38f", ground2: "#6fcf7d" },
+    { name: "Whispering Woods", sky: ["#c9c2ff", "#ffd8ec"], ground: "#6fbf8f", ground2: "#3f9a6f" },
+    { name: "Crystal Caves", sky: ["#6d5aa8", "#b99ae8"], ground: "#8a78c9", ground2: "#6a58a8" },
+    { name: "Cloudtop Mountains", sky: ["#a8d8ff", "#f3f8ff"], ground: "#ffffff", ground2: "#dbe9ff" },
+    { name: "Thornwick Tower", sky: ["#8a6fc2", "#ff9fc8"], ground: "#7b5c8f", ground2: "#5a3f6e" }
+  ];
+
+  var SCENES = [
+    // ---- Sunpetal Meadow ----
+    { land: 0, title: "The Empty Throne",
+      text: ["Princess Akira trots into the Great Hall with a basket of sunberries for breakfast. But the King's throne is empty! Pinned to the cushion is a note in messy, glittery writing:", "“We've got the King! Don't tell ANYONE, or we'll take him even further away. Love, B and B.” Her own brothers! Akira's tummy flips."],
+      ask: "What should Akira do?",
+      choices: [
+        { t: "Tell the Queen straight away, even though the note says not to.", ok: true,
+          r: "The Queen hugs Akira tight. “You did exactly the right thing.” She gives Akira the royal map and a tiny sparkle-bird called Pip to be her guide.",
+          w: "A secret that makes you scared or worried is a secret to share with a grown-up you trust." },
+        { t: "Keep it secret and sneak out alone, just like the note says.", ok: false,
+          r: "Akira tiptoes out with no map and gets lost in the rose garden for an hour. Luckily Pip the sparkle-bird spots her and flies down to help, but B and B have used that hour to get further away.",
+          w: "People who ask you to keep scary secrets are counting on you feeling alone. Telling a trusted grown-up gives you a team." }
+      ] },
+    { land: 0, title: "Packing the Saddlebag",
+      text: ["Akira's saddlebag only has room for three things. The quest could take days. Pip hops about on her shoulder, chirping advice."],
+      ask: "What does Akira pack?",
+      choices: [
+        { t: "Her three sparkliest tiaras, so everyone knows she's a princess.", ok: false,
+          r: "The tiaras look amazing but they are heavy, and you can't eat a tiara. By lunchtime Akira has to trot all the way back for supplies.",
+          w: "Needs come before wants. It is fine to love sparkly things, but pack what you need first." },
+        { t: "Healing apples, a lantern and a warm blanket.", ok: true,
+          r: "Pip nods wisely. “Apples for energy, light for the dark, and warmth for cold nights. Very clever!” They set off at a gallop.",
+          w: "Planning ahead is a superpower. Think about what you will really need, not just what looks nice." },
+        { t: "A giant bag of sweets, all for herself.", ok: false,
+          r: "By the first hill, Akira has eaten half the sweets and feels wobbly and sick. She has to rest under a tree while B and B trot on ahead.",
+          w: "Things that feel good right now are not always good for you later. Balance is the trick." }
+      ] },
+    { land: 0, title: "The Lost Foal",
+      text: ["By the path, a tiny foal with a clover-shaped spot is crying. “I can't find my mummy!” she sobs. Helping her would mean a detour through the tall grass, and Akira is in a hurry."],
+      ask: "What should Akira do?",
+      choices: [
+        { t: "Say “Sorry, I'm on an important quest” and keep going.", ok: false,
+          r: "Akira gallops on, but she can't stop thinking about the crying foal. She keeps looking back, trips over a log and twists her hoof. Guilt is heavy to carry.",
+          w: "When someone small needs help, stopping is usually part of the quest, not a delay from it." },
+        { t: "Tell the foal to wait right there and someone else will come.", ok: false,
+          r: "Akira hopes someone else will help, but nobody comes. She feels bad and turns back later, which takes even longer.",
+          w: "When we think “someone else will help”, often nobody does. If you can help, you might be the someone." },
+        { t: "Stop, calm her down, and help her find her mummy.", ok: true,
+          r: "Clover's mum, Meadowmint, is so grateful that she shows Akira a secret shortcut through the buttercups. Kindness came back as a gift!",
+          w: "Kindness is never wasted time. It often comes back to you in ways you don't expect." }
+      ] },
+    { land: 0, title: "The Gossiping Geese",
+      text: ["A gaggle of geese are honking by the pond. “Honk! We heard the King ran away on purpose,” says the biggest goose. “Because he didn't love his daughter anymore! Honk honk!” Akira feels a hot lump in her throat."],
+      ask: "How does Akira respond?",
+      choices: [
+        { t: "Believe them and cry. Maybe it's true.", ok: false,
+          r: "Akira sits by the pond feeling awful for a long time, until Pip reminds her about the note from B and B. The geese were just spreading rumours.",
+          w: "Just because someone says something loudly doesn't make it true. Our worries love to believe mean stories." },
+        { t: "Ask them calmly, “How do you know that? Did you see it?”", ok: true,
+          r: "The geese look at each other. “Well... a duck told a swan who told us.” Akira smiles. She has the real note from B and B. She knows the truth.",
+          w: "Check the facts before you believe something, especially something that hurts. Ask: How do they know?" },
+        { t: "Honk back at them: “You're silly, feather-brained BIRDS!”", ok: false,
+          r: "The geese get cross and chase Akira round the pond, flapping and hissing. It takes ages to get away, and she still feels upset inside.",
+          w: "Shouting back rarely fixes hurt feelings. Staying calm keeps you in charge of yourself." }
+      ] },
+    { land: 0, title: "The Candyfloss Field",
+      text: ["Akira and Pip reach a field where pink candyfloss grows like fluffy flowers. The sign says: “Pick as much as you like! But eat it too fast and you'll need a very long nap.”"],
+      ask: "What does Akira do?",
+      choices: [
+        { t: "Pick a small bundle to share with friends later.", ok: true,
+          r: "Akira tucks the candyfloss into her bag. Later on the quest it becomes the perfect gift to cheer up someone sad.",
+          w: "Waiting for a treat can make it even better. Being patient is like a muscle that grows stronger." },
+        { t: "Gobble a big pile right now. Quests are hungry work!", ok: false,
+          r: "Delicious! But ten minutes later Akira is snoring in the middle of the field. She wakes up at sunset, sticky and grumpy.",
+          w: "Stopping to think “What will happen next?” helps us make choices our future self will thank us for." }
+      ] },
+    { land: 0, title: "The Broken Fence",
+      text: ["Galloping too fast, Akira bumps into Farmer Haybale's fence and knocks a whole section down. Nobody saw. The sheep are starting to wander towards the gap."],
+      ask: "What should Akira do?",
+      choices: [
+        { t: "Keep going. Nobody saw, and the King needs her.", ok: false,
+          r: "Behind her the sheep escape all over the meadow. Farmer Haybale's shout echoes across the hills, and Akira's cheeks burn. She has to go back anyway.",
+          w: "Doing the right thing when nobody is watching is what real honesty looks like." },
+        { t: "Stop, fix the fence, and tell the farmer what happened.", ok: true,
+          r: "Farmer Haybale is surprised and grateful. “Most ponies would've run off!” He gives Akira a ride in his hay cart right to the edge of the woods.",
+          w: "Owning up to a mistake takes courage. People trust you more when you do." }
+      ] },
+    { land: 0, title: "The Toll Bridge",
+      text: ["A grumpy troll called Grumbletoll guards the bridge. “One gold coin to cross!” Akira only has three coins for the whole trip. Pip whispers, “Say we have no money at all!”"],
+      ask: "What does Akira do?",
+      choices: [
+        { t: "Pretend to have no money, like Pip says.", ok: false,
+          r: "Grumbletoll sees the coins jingling in her bag. “Fibber! Now it's TWO coins!” Akira has to pay double and feels silly.",
+          w: "Fibs often make things worse. Honest answers keep life simpler." },
+        { t: "Tell the truth and offer to help the troll instead of paying.", ok: true,
+          r: "“Help?” Grumbletoll blinks. Nobody has ever offered before. Akira helps him patch his leaky roof, and he lets them cross for free, with a wave!",
+          w: "Honesty plus a little creativity can solve problems that fibs can't." },
+        { t: "Wait until he falls asleep and sneak across.", ok: false,
+          r: "Akira waits and waits. Grumbletoll does not sleep for hours. When he finally snores, it's the middle of the night.",
+          w: "Sneaking around rules usually takes longer and feels worse than facing a problem directly." }
+      ] },
+
+    // ---- Whispering Woods ----
+    { land: 1, title: "The Dark Woods",
+      text: ["The Whispering Woods are dark and twisty. The trees creak. Something hoots. Akira's heart is pounding so fast she can hear it in her ears."],
+      ask: "How does Akira handle the fear?",
+      choices: [
+        { t: "Close her eyes tight and run as fast as she can.", ok: false,
+          r: "Running with her eyes closed is a bad idea. Bonk! She runs straight into a tree and has to sit down with a sore nose.",
+          w: "When we panic, our brain stops thinking clearly. Slowing down helps us see what is really there." },
+        { t: "Stop, take three slow breaths, and light her lantern.", ok: true,
+          r: "Breathe in... and out. Three times. Akira's heart slows down. She lights her lantern and sees the hooting thing is just a sleepy owl. The woods look friendlier already.",
+          w: "Slow breathing tells your body it is safe. Brave doesn't mean not scared. It means scared and still thinking." },
+        { t: "Turn back home. It's too scary.", ok: false,
+          r: "Akira turns back, then stops. The King still needs her. By the time she finds her courage again, precious time has gone.",
+          w: "Fear is a feeling, not a stop sign. It is okay to be scared and keep going with a plan." }
+      ] },
+    { land: 1, title: "The Acorn Game",
+      text: ["A group of squirrels are playing acorn-ball. A small squirrel with a bent tail asks to join. “No way! Your tail's all wonky!” laughs the biggest squirrel. The little one's eyes fill with tears."],
+      ask: "What does Akira do?",
+      choices: [
+        { t: "Stay quiet. It's not her business.", ok: false,
+          r: "Akira walks on, but the little squirrel's sad face stays in her mind. She realises that saying nothing felt like agreeing.",
+          w: "When you see someone being left out, staying silent can feel like you're on the bully's side." },
+        { t: "Kindly say, “Everyone should get a turn. Can I play too, on her team?”", ok: true,
+          r: "The squirrels can't say no to a princess! The little squirrel, Hazel, turns out to be the best player of all. She tells Akira which path B and B took.",
+          w: "One kind voice can change everything. Standing up for others is what true leaders do." },
+        { t: "Laugh along with the big squirrels so they like her.", ok: false,
+          r: "The big squirrels laugh, but it feels horrible inside. And Hazel, who saw B and B pass by, runs off before Akira can ask her anything.",
+          w: "Fitting in by being unkind never feels good for long. Real friends like you for being kind." }
+      ] },
+    { land: 1, title: "The Mirror of Doubt",
+      text: ["In a clearing stands a tall, spooky mirror. It speaks in a sneering voice: “You? Save the King? You're too small. Your brothers were always cleverer. You'll probably mess it all up.”"],
+      ask: "How does Akira answer?",
+      choices: [
+        { t: "Believe it. Maybe she really isn't good enough.", ok: false,
+          r: "Akira's shoulders droop and she sits down, feeling tiny. Pip has to spend a long time reminding her of everything she's already done.",
+          w: "The mean voice of doubt isn't the truth. It's just a feeling. Talk to yourself like you'd talk to a friend." },
+        { t: "Say, “I'm still learning, and I've already come so far.”", ok: true,
+          r: "The mirror cracks down the middle with a sad little “oh.” Behind it is a hidden path! Doubt only has power if you believe it.",
+          w: "“I can't do it YET” is powerful. Every hero is still learning. Look at how far you've already come." },
+        { t: "Kick the mirror and shout “Shut up!”", ok: false,
+          r: "The mirror shatters, but the mean words keep echoing in Akira's head all afternoon. Smashing things didn't make the feeling go away.",
+          w: "Anger at our own doubts doesn't quieten them. Kind, true words to yourself work much better." }
+      ] },
+    { land: 1, title: "The Wishing Well",
+      text: ["Akira finds a wishing well and a single magic coin glittering on its edge. Nearby, a badger family is shivering. “Our burrow flooded,” says Mama Badger. “We have nowhere warm to sleep.”"],
+      ask: "What does Akira wish for?",
+      choices: [
+        { t: "That B and B's hooves get stuck in mud forever!", ok: false,
+          r: "The well gurgles grumpily. “I don't grant mean wishes.” The coin sinks and the wish is wasted. The badgers keep shivering.",
+          w: "Wanting to get back at people is a normal feeling, but acting on it rarely makes things better." },
+        { t: "To become the most powerful unicorn in the world.", ok: false,
+          r: "Akira glows for one second, then the magic fizzles. “Power without purpose doesn't last,” whispers the well. The badgers look away sadly.",
+          w: "Being powerful isn't the same as being good. What matters is how you use what you have." },
+        { t: "A warm, dry new home for the badger family.", ok: true,
+          r: "Sparkles swirl and a cosy new burrow appears! Papa Badger gives Akira a magic compass that always points towards someone you love. It points straight to the King!",
+          w: "Generosity makes the world warmer, and often makes your own path clearer too." }
+      ] },
+    { land: 1, title: "Grandmother Owl's Riddle",
+      text: ["Grandmother Owl will give directions to anyone who solves her riddle: “What gets bigger the more you take away?” While she's turned away, Pip spots the answer written on the back of her scroll. “Psst! I can see it!”"],
+      ask: "What does Akira do?",
+      choices: [
+        { t: "Try to work it out herself, and admit it if she's stuck.", ok: true,
+          r: "Akira thinks hard. Something that grows when you take away... dig... a HOLE! Grandmother Owl hoots with delight and gives her a glowing feather that lights the darkest places.",
+          w: "Figuring things out yourself feels amazing, and it's fine to say “I'm stuck” and ask for a clue." },
+        { t: "Let Pip read out the answer. Who'll know?", ok: false,
+          r: "“A hole!” says Akira. Grandmother Owl turns slowly. “Your answer came very fast... and from your bird.” She gives the directions, but not the glowing feather.",
+          w: "Cheating can get you an answer, but it takes away the learning and the trust." }
+      ] },
+    { land: 1, title: "Pip's Big Mistake",
+      text: ["While crossing a stream, Pip drops the royal map. Splash! It floats away down the river. Pip's feathers droop. “I'm so sorry, Akira!” Akira feels anger bubbling up like a fizzy drink."],
+      ask: "What does Akira say?",
+      choices: [
+        { t: "“You ruin EVERYTHING, Pip!”", ok: false,
+          r: "Pip flies up into a tree and won't come down. Without her guide, Akira wanders the wrong way until she finally says sorry.",
+          w: "Words said in anger can hurt for a long time. Pause before you speak when you feel the fizz." },
+        { t: "Say nothing and ignore Pip for the rest of the day.", ok: false,
+          r: "The silence is awful. Pip is too sad to help, and Akira is too cross to ask. They both take the wrong turn at the next fork.",
+          w: "The silent treatment hurts people too. Talking about feelings is better than freezing someone out." },
+        { t: "Take a breath. “I'm upset, but it was an accident. Let's fix it together.”", ok: true,
+          r: "Pip brightens instantly. Together they remember the route, and Pip draws a new map in the mud with her beak. Teamwork!",
+          w: "It's okay to feel angry. Name the feeling, breathe, then work on the problem, not against the person." }
+      ] },
+    { land: 1, title: "The Two Paths",
+      text: ["The path splits. A signpost says: LEFT – quick, straight through the Fairy Garden (please don't trample the flowers). RIGHT – the long way round. The fairies are asleep. No one would know."],
+      ask: "Which way does Akira go?",
+      choices: [
+        { t: "The long way round, to protect the garden.", ok: true,
+          r: "It takes a bit longer, but the fairies wake up and see what Akira did. Grateful, they sprinkle her hooves with speed dust, and she zooms ahead!",
+          w: "Respecting things that belong to others, even when no one is watching, shows true character." },
+        { t: "Straight through the garden. It's an emergency!", ok: false,
+          r: "Crunch, squish, crunch. The fairies wake up to find their flowers flattened and are so upset that they tangle Akira's mane in vines for an hour.",
+          w: "Our goals are important, but not more important than other people's things and feelings." }
+      ] },
+
+    // ---- Crystal Caves ----
+    { land: 2, title: "The Glowing Gem",
+      text: ["Deep in the Crystal Caves, Akira finds a beautiful glowing gem on a rock. It would light the dark tunnels perfectly. A little tag on it says: “Belongs to Marlo.”"],
+      ask: "What does Akira do?",
+      choices: [
+        { t: "Take it. She needs it more right now.", ok: false,
+          r: "The gem lights the way, but when Akira meets a sad little mole searching everywhere for his gem, she feels terrible. She gives it back, but Marlo doesn't trust her enough to help.",
+          w: "Needing something doesn't make it yours. Borrowing means asking first." },
+        { t: "Find Marlo and give it back to him.", ok: true,
+          r: "Marlo the mole hugs the gem. “My grandpa gave me this! Thank you!” He offers to guide Akira through the caves. He knows every tunnel.",
+          w: "Returning what isn't yours builds friendships and trust." }
+      ] },
+    { land: 2, title: "The Echo Cavern",
+      text: ["In the Echo Cavern, every word bounces back three times. Pip giggles. “Let's shout rude things about B and B! It'll make you feel better!”"],
+      ask: "What does Akira shout?",
+      choices: [
+        { t: "“B and B are STINKY and HORRIBLE!”", ok: false,
+          r: "“HORRIBLE... HORRIBLE... HORRIBLE!” The cruel words bounce back louder and louder, and a rumble shakes loose rocks that block the tunnel. It takes ages to dig through.",
+          w: "Mean words have a way of coming back to us. What we put into the world echoes." },
+        { t: "“I will find you, and we'll sort this out!”", ok: true,
+          r: "The hopeful words echo softly, and the crystals in the walls light up one by one, showing the way forward like a glowing path.",
+          w: "Choosing hopeful words, even when you're cross, lights the way for you and others." }
+      ] },
+    { land: 2, title: "The Trapped Bat",
+      text: ["Akira hears squeaking. A little bat is trapped under a fallen rock. He wears a badge that says “B and B's Spy.” If she frees him, he might fly off and warn her brothers."],
+      ask: "What does Akira do?",
+      choices: [
+        { t: "Free him. Nobody deserves to be stuck and scared.", ok: true,
+          r: "The bat, Flit, is amazed. “You saved me, even though I'm a spy?” He tears off his badge. “I'll help you now. B and B keep the King at the top of Thornwick Tower.”",
+          w: "Being kind to someone who's been unkind to you can turn an enemy into a friend." },
+        { t: "Leave him. He's on the wrong side.", ok: false,
+          r: "Akira walks on, but the squeaks follow her down the tunnel. Later, other bats hear what happened and fly off to tell B and B that Akira is coming.",
+          w: "Everyone feels pain and fear, even people on the “other side”. Compassion is for everyone." },
+        { t: "Tease him first: “Not so clever now, spy!”", ok: false,
+          r: "Flit squeaks in fright. When a helpful rabbit frees him, he zooms straight to Thornwick Tower to warn B and B.",
+          w: "Making fun of someone who is already hurting is never brave. It usually makes things worse." }
+      ] },
+    { land: 2, title: "The Three-Stone Door",
+      text: ["A giant stone door blocks the tunnel. Carved on it: “Only friends working together may pass.” Three heavy stones must be pushed at once. Marlo is shy and says, “I'm probably not strong enough...”"],
+      ask: "What does Akira do?",
+      choices: [
+        { t: "Push all three stones herself, one at a time.", ok: false,
+          r: "Akira pushes and pushes until she's exhausted. The door doesn't budge. It needs all three stones at once. She's wasted all her energy.",
+          w: "Trying to do everything alone can make things harder. Asking for help is smart, not weak." },
+        { t: "Give everyone a job that suits them and count “1, 2, 3, PUSH!”", ok: true,
+          r: "Marlo digs under his stone to loosen it, Pip flaps with all her might, and Akira pushes hard. RUMBLE! The door swings open. Marlo beams with pride.",
+          w: "Everyone has a strength. Good teams find what each person is good at." }
+      ] },
+    { land: 2, title: "The Crystal Medal",
+      text: ["Beyond the door, a Crystal Guardian appears. “Who worked out how to open the door? The clever one gets this medal.” It was really Marlo's digging idea. The medal is gorgeous."],
+      ask: "What does Akira say?",
+      choices: [
+        { t: "“It was Marlo's idea! He deserves it.”", ok: true,
+          r: "Marlo blushes as the medal is placed around his neck. The Guardian smiles at Akira. “You are honest AND humble. Take this crystal key. You'll need it at the tower.”",
+          w: "Giving others credit for their ideas makes you a person everyone wants on their team." },
+        { t: "“That was me!”", ok: false,
+          r: "The Guardian's eyes flash. “Crystals can see the truth.” The medal turns to dust, and Marlo looks hurt. Akira wishes she could take it back.",
+          w: "Taking credit for someone else's work breaks trust, and trust is hard to fix." }
+      ] },
+    { land: 2, title: "The Blocked Tunnel",
+      text: ["Akira has spent an hour digging through a tunnel full of rubble. It's still blocked. Marlo says, “There's another tunnel round the side. It's longer, but it's open.”"],
+      ask: "What does Akira do?",
+      choices: [
+        { t: "Keep digging. She's worked too hard to give up now!", ok: false,
+          r: "Another hour of digging. More rubble. Eventually Akira has to take the other tunnel anyway, tired and dusty.",
+          w: "Sometimes the bravest thing is to change your plan, even after working hard on it." },
+        { t: "Try Marlo's tunnel. A new plan is okay.", ok: true,
+          r: "Marlo's tunnel is open and smooth, and it comes out right at the foot of the Cloudtop Mountains. Great thinking, both of you!",
+          w: "Changing your mind when you learn something new isn't giving up. It's being wise." }
+      ] },
+    { land: 2, title: "A Promise to Marlo",
+      text: ["At the cave exit, Marlo asks shyly, “You promised you'd help me find my cousin Mabel. She lives just over there.” Akira did promise. But the mountains are right in front of her."],
+      ask: "What does Akira do?",
+      choices: [
+        { t: "Keep her promise and help find Mabel.", ok: true,
+          r: "Mabel is found in minutes, and she knows a secret mountain path that saves hours! Keeping promises matters.",
+          w: "Keeping a promise, even when it's hard, shows people they can count on you." },
+        { t: "Say, “Sorry, I really have to go,” and leave.", ok: false,
+          r: "Marlo's whiskers droop. Akira climbs on alone and takes a long, rocky path. She later learns Mabel knew a much faster way.",
+          w: "Breaking promises hurts people. If you truly can't keep one, explain honestly and make a new plan together." },
+        { t: "Pretend she forgot about the promise.", ok: false,
+          r: "“What promise?” Akira says. Marlo knows she remembers. He waves goodbye sadly, and the path ahead feels lonely and long.",
+          w: "Pretending to forget is still breaking a promise, with a fib added on top." }
+      ] },
+
+    // ---- Cloudtop Mountains ----
+    { land: 3, title: "The Pegasus Race",
+      text: ["Captain Breeze, a pegasus, offers to fly the winner of the Cloud Race to the top of the mountain. Akira is racing a fast pony called Zippy. Near the finish, Zippy is just ahead. Akira could stick out a hoof and trip her."],
+      ask: "What does Akira do?",
+      choices: [
+        { t: "Trip Zippy. The King is more important than a race!", ok: false,
+          r: "Zippy tumbles into a cloud. Akira wins, but Captain Breeze saw everything. “I don't fly cheats,” he says, and gives the ride to Zippy instead.",
+          w: "Winning by hurting someone isn't really winning. How you play matters." },
+        { t: "Race fair, and do her very best.", ok: true,
+          r: "Akira loses by a nose! But Captain Breeze is so impressed by her fair play that he flies both ponies up the mountain.",
+          w: "Being a good sport, whether you win or lose, earns respect that lasts." }
+      ] },
+    { land: 3, title: "The Silver-Tongued Fox",
+      text: ["A fox with a velvety voice appears. “Oh, you must be the most beautiful, clever princess in the world! Give me your compass and I'll lead you straight to the King. Your little bird friend doesn't know the way like I do.”"],
+      ask: "What does Akira do?",
+      choices: [
+        { t: "Politely say no, and stick with her friends.", ok: true,
+          r: "The fox's smile vanishes and he slinks away. Flit whispers, “That was Velvet, one of B and B's helpers! You were very wise.”",
+          w: "When someone flatters you and tries to turn you against your friends, be careful. Real friends don't need to trick you." },
+        { t: "Give him the compass. He's so nice!", ok: false,
+          r: "The fox grabs the compass and races off, laughing. He was one of B and B's helpers! It takes ages to find the right path without it.",
+          w: "Lots of compliments plus “give me something” is a warning sign. Trust people by what they do, not just what they say." }
+      ] },
+    { land: 3, title: "The Snowslide",
+      text: ["Rumble! Snow starts sliding down the mountain. Akira sees a baby goat stuck on a ledge, and at the same moment her saddlebag with all her supplies starts sliding the other way. She can only save one."],
+      ask: "What does Akira save?",
+      choices: [
+        { t: "The baby goat.", ok: true,
+          r: "Akira scoops up the kid just in time. Her bag disappears into the snow, but the mountain goats are so thankful they give her new supplies and lead her to a warm cave.",
+          w: "Things can be replaced. Living creatures can't. Choose life first, always." },
+        { t: "Her saddlebag. She needs those supplies!", ok: false,
+          r: "Akira grabs the bag. Luckily Captain Breeze swoops in to save the goat, but he looks at Akira with disappointment, and doesn't offer another ride.",
+          w: "In an emergency, people and animals always matter more than stuff." }
+      ] },
+    { land: 3, title: "The Puppet Show",
+      text: ["In a mountain village, Akira sees a puppet show about the royal family. The puppets of B and B are funny and clever, and everyone is cheering for them. Nobody even mentions Akira. A green, prickly feeling grows in her chest."],
+      ask: "What does Akira do with the feeling?",
+      choices: [
+        { t: "Grumble all afternoon about how unfair it is.", ok: false,
+          r: "Akira sulks so long that she misses the mountain cart that was leaving for Thornwick Tower. Jealousy made her stuck.",
+          w: "Jealousy is normal, but stewing in it keeps you stuck. Feelings are messages, not homes to live in." },
+        { t: "Scribble a mean note about B and B and pin it up.", ok: false,
+          r: "The villagers frown at the note. Nobody wants to help a pony who writes mean notes, and Akira has to find her own way up the mountain.",
+          w: "Trying to make others look bad never makes us look good." },
+        { t: "Tell Pip, “I feel jealous,” and talk about why.", ok: true,
+          r: "Talking helps. Akira realises she wants to feel noticed too, and wonders if B and B feel the same way. The villagers overhear and offer her a ride in the mountain cart.",
+          w: "Naming a feeling out loud (“I feel jealous”) shrinks it. Talking to a friend helps even more." }
+      ] },
+    { land: 3, title: "Lost in the Clouds",
+      text: ["Thick clouds roll in and everything looks the same. Akira isn't sure which way to go. A big shaggy yak is munching grass nearby. Akira feels a bit embarrassed. A princess should know the way!"],
+      ask: "What does Akira do?",
+      choices: [
+        { t: "Figure it out alone. She doesn't want to look silly.", ok: false,
+          r: "Akira walks in a big circle for an hour and ends up back next to the yak, who chuckles. “You could've just asked, dear.”",
+          w: "Pride can get in the way of help. Everyone needs directions sometimes." },
+        { t: "Ask the yak for directions.", ok: true,
+          r: "“Why of course!” says Old Yakkity. “Follow the bells.” She hangs a bell around Akira's neck that rings louder the closer she gets to the tower.",
+          w: "Asking for help is a sign of strength. Clever people ask lots of questions." }
+      ] },
+    { land: 3, title: "A Tired Friend",
+      text: ["The sun has set. Pip is so tired she keeps falling asleep mid-flap. Marlo is yawning too. Akira desperately wants to keep going through the night."],
+      ask: "What does Akira decide?",
+      choices: [
+        { t: "Push on through the night. No time to rest!", ok: false,
+          r: "In the dark, everyone is too tired to think. They take a wrong turn, Pip bumps into a rock, and they have to stop anyway, much further from the path.",
+          w: "Tired brains make more mistakes. Rest isn't lazy. It's part of being strong." },
+        { t: "Set up camp and let everyone rest.", ok: true,
+          r: "They sleep curled up under the stars. In the morning everyone is full of energy and they cover twice the distance before lunch.",
+          w: "Looking after your friends, and yourself, helps the whole team go further." }
+      ] },
+    { land: 3, title: "The Muddy Stable",
+      text: ["The team stays at Captain Breeze's cloud stable. In the morning, the stable is a muddy mess, and it was Pip, having a splashy puddle-bath! Captain Breeze asks, “Who made this mess?” Pip looks terrified."],
+      ask: "What does Akira do?",
+      choices: [
+        { t: "Say, “It was Pip!” and point.", ok: false,
+          r: "Pip hangs her head and feels betrayed. Captain Breeze is cross with everyone, and the cleaning takes all morning.",
+          w: "Being honest doesn't mean being harsh. There's a kind way to tell the truth." },
+        { t: "Fib and say a wild goose did it.", ok: false,
+          r: "Captain Breeze finds bird footprints the size of Pip's feet. Now he doesn't trust either of them, and the morning is spent cleaning in silence.",
+          w: "Covering for a friend with a lie might feel loyal, but it usually makes things worse for everyone." },
+        { t: "Whisper to Pip, “Let's tell him together, and help clean up.”", ok: true,
+          r: "Pip owns up with Akira beside her. Captain Breeze laughs. “Thank you for being honest!” Together they clean up fast, and he flies them to the edge of Thornwick.",
+          w: "Supporting a friend to be honest is the kindest kind of loyalty." }
+      ] },
+
+    // ---- Thornwick Tower ----
+    { land: 4, title: "The Grumpy Dragon",
+      text: ["Thornwick Tower rises out of a twisty thorn forest. At the gate sits Smoulder, a small grumpy dragon. “Go away!” he puffs. But Akira notices his eyes are red, as if he's been crying."],
+      ask: "What does Akira do?",
+      choices: [
+        { t: "Throw sleepy dust at him and sneak past.", ok: false,
+          r: "Smoulder sneezes the dust away and sets off a loud alarm bell. B and B hear it and move the King higher up the tower.",
+          w: "Tricking someone instead of understanding them often backfires." },
+        { t: "Gently ask, “Are you okay? You look sad.”", ok: true,
+          r: "Smoulder sniffles. “B and B call me Smelly Smoulder and make me guard the gate all day.” Akira shares her candyfloss and listens. Smoulder unlocks the gate. “Good luck, princess.”",
+          w: "Grumpy on the outside can mean hurting on the inside. Kindness and listening open doors." },
+        { t: "Roar back even louder to scare him.", ok: false,
+          r: "Smoulder roars back, and a puff of smoke fills the gateway. By the time it clears, B and B have heard the noise and bolted the doors.",
+          w: "Meeting anger with more anger just makes everything louder." }
+      ] },
+    { land: 4, title: "The Thorn Wand",
+      text: ["Inside the tower, Akira finds B and B's Thorn Wand on a table. With it, she could trap her brothers in a thorny cage forever and they'd never bother anyone again."],
+      ask: "What does Akira do with the wand?",
+      choices: [
+        { t: "Take it. She'll use it to trap them like they trapped the King.", ok: false,
+          r: "As Akira grabs the wand, thorns sprout from the handle and prick her hoof. The wand only works for angry hearts, and it sends a warning to B and B.",
+          w: "Getting even can feel fair in the moment, but it keeps the unkindness going round and round." },
+        { t: "Leave it lying on the table.", ok: false,
+          r: "Akira leaves it and moves on. Minutes later, Little B finds the wand and uses it to grow thorns across the stairs. Now the way up is blocked!",
+          w: "Walking away from something dangerous isn't enough if someone else could get hurt. Make it safe." },
+        { t: "Lock it safely in a box with the crystal key so nobody gets hurt.", ok: true,
+          r: "Click! The box glows and the thorns across the tower start to shrink. Akira didn't use power to hurt. She used it to protect.",
+          w: "Real power is choosing not to hurt people, even when you could." }
+      ] },
+    { land: 4, title: "The Endless Stairs",
+      text: ["The tower has one hundred and one stairs. Halfway up, Akira's legs are shaking. “I'll never make it,” she pants. The top seems impossibly far away."],
+      ask: "What does Akira tell herself?",
+      choices: [
+        { t: "“This is too hard. I'll just sit here for a while.”", ok: false,
+          r: "Akira sits for a very long time, staring at all the stairs left. The more she looks, the bigger they seem. Eventually she climbs on, much later than hoped.",
+          w: "Big tasks feel impossible when we look at them all at once." },
+        { t: "“Just to the next window. Then the next one.”", ok: true,
+          r: "One window. Then another. Pip cheers at every one. Before she knows it, Akira is at the top! Little goals added up to a big one.",
+          w: "Break big challenges into little steps. Every small step counts." }
+      ] },
+    { land: 4, title: "Face to Face",
+      text: ["At the top of the tower, the King is sitting in a cage of vines, and there are B and B. “Ha! Took you long enough, little sister,” says Big B. “Now WE'RE in charge of the kingdom!” adds Little B."],
+      ask: "What does Akira do?",
+      choices: [
+        { t: "Shout, “You're the WORST brothers ever!”", ok: false,
+          r: "B and B shout back, and the vines around the King grow tighter with every angry word. It takes ages for everyone to calm down.",
+          w: "When everyone is shouting, nobody is listening." },
+        { t: "Blast them with her unicorn magic.", ok: false,
+          r: "Sparks fly and B and B blast back. Nobody wins a magic fight. Everyone ends up in a smoky, crackly mess, and the King is still trapped.",
+          w: "Fighting fire with fire usually just makes a bigger fire." },
+        { t: "Take a breath and calmly ask, “Why did you do this?”", ok: true,
+          r: "B and B look surprised. Then Little B says quietly, “Everyone always notices you. We just wanted to feel important too.” The vines loosen a little.",
+          w: "Asking “why?” helps us understand people. Most unkind behaviour comes from a feeling underneath." }
+      ] },
+    { land: 4, title: "The Final Choice",
+      text: ["With the thorn magic fading, the vines fall away and the King steps free. The brothers' own vines have tangled them up in a big, grumpy knot. The King turns to Akira. “You saved me, my brave girl. So you shall decide what happens to your brothers.”"],
+      ask: "What does Akira decide?",
+      choices: [
+        { t: "“Lock them in the dungeon forever!”", ok: false,
+          r: "The guards take B and B away. They look back at Akira with sad, scared faces. The tower is quiet, but it doesn't feel like a happy ending.",
+          w: "Consequences matter, but punishment without a chance to change doesn't heal anything." },
+        { t: "“I forgive you. But you need to say sorry and help put things right.”", ok: true,
+          r: "B and B burst into tears and hug their little sister. “We're sorry. We'll fix Farmer Haybale's fence, apologise to Smoulder, and help everyone we upset.”",
+          w: "Forgiveness isn't saying what happened was okay. It's giving someone the chance to do better." }
+      ] }
+  ];
+
+  // ---------- Drawing ----------
+  function akiraSVG(size) {
+    return '<svg viewBox="0 0 200 180" width="' + size + '" height="' + (size * 0.9) + '" aria-hidden="true">' +
+      '<path d="M50 96 C20 86 16 120 30 138 C38 150 26 162 14 158 C30 170 52 160 50 138 C48 124 56 112 60 106 Z" fill="#b56df0" stroke="#3b2a5c" stroke-width="4" stroke-linejoin="round"/>' +
+      '<path d="M40 110 C30 124 34 140 42 146" fill="none" stroke="#ff8fcf" stroke-width="6" stroke-linecap="round"/>' +
+      '<rect x="64" y="118" width="15" height="44" rx="7" fill="#e3d4ff" stroke="#3b2a5c" stroke-width="4"/>' +
+      '<rect x="84" y="120" width="15" height="42" rx="7" fill="#d5c2fb" stroke="#3b2a5c" stroke-width="4"/>' +
+      '<rect x="112" y="120" width="15" height="42" rx="7" fill="#d5c2fb" stroke="#3b2a5c" stroke-width="4"/>' +
+      '<rect x="130" y="118" width="15" height="44" rx="7" fill="#e3d4ff" stroke="#3b2a5c" stroke-width="4"/>' +
+      '<path d="M64 156 h15 v6 a4 4 0 0 1 -4 4 h-7 a4 4 0 0 1 -4 -4 Z M130 156 h15 v6 a4 4 0 0 1 -4 4 h-7 a4 4 0 0 1 -4 -4 Z" fill="#ff6fb5"/>' +
+      '<ellipse cx="102" cy="108" rx="52" ry="32" fill="#e3d4ff" stroke="#3b2a5c" stroke-width="4"/>' +
+      '<path d="M86 104 l4 -9 l4 9 l9 1 l-7 6 l2 9 l-8 -5 l-8 5 l2 -9 l-7 -6 Z" fill="#ffc93c" stroke="#e39b00" stroke-width="2" stroke-linejoin="round"/>' +
+      '<path d="M128 96 C132 76 136 62 146 52 L166 62 C160 76 156 92 150 104 Z" fill="#e3d4ff" stroke="#3b2a5c" stroke-width="4" stroke-linejoin="round"/>' +
+      '<ellipse cx="160" cy="56" rx="28" ry="25" fill="#e3d4ff" stroke="#3b2a5c" stroke-width="4"/>' +
+      '<ellipse cx="180" cy="68" rx="15" ry="12" fill="#f3ebff" stroke="#3b2a5c" stroke-width="4"/>' +
+      '<circle cx="184" cy="66" r="2.4" fill="#3b2a5c"/>' +
+      '<path d="M152 36 L160 4 L166 38 Z" fill="#ffd95a" stroke="#e39b00" stroke-width="3" stroke-linejoin="round"/>' +
+      '<path d="M155 26 L164 23 M154 32 L165 29 M157 18 L163 16" stroke="#e39b00" stroke-width="2"/>' +
+      '<path d="M146 36 C132 34 124 46 128 58 C118 62 118 78 126 86 C120 96 128 106 134 104 C132 90 140 74 146 62 C144 52 150 44 156 42 Z" fill="#b56df0" stroke="#3b2a5c" stroke-width="4" stroke-linejoin="round"/>' +
+      '<path d="M136 50 C130 62 134 72 130 84" fill="none" stroke="#ff8fcf" stroke-width="5" stroke-linecap="round"/>' +
+      '<path d="M146 30 l4 -8 l4 6 l4 -8 l4 8 l4 -6 l2 10 Z" fill="#ffc93c" stroke="#e39b00" stroke-width="2" stroke-linejoin="round"/>' +
+      '<ellipse cx="160" cy="54" rx="7.5" ry="9.5" fill="#3b2a5c"/>' +
+      '<circle cx="162.5" cy="50" r="3" fill="#fff"/><circle cx="158" cy="58" r="1.4" fill="#fff"/>' +
+      '<path d="M152 44 q3 -4 8 -4" fill="none" stroke="#3b2a5c" stroke-width="2.5" stroke-linecap="round"/>' +
+      '<ellipse cx="170" cy="70" rx="5" ry="3" fill="#ffb3d9" opacity=".8"/>' +
+      '<path d="M174 76 q6 4 11 0" fill="none" stroke="#3b2a5c" stroke-width="2.5" stroke-linecap="round"/>' +
+      '</svg>';
+  }
+
+  function sceneArt(landIdx) {
+    var L = LANDS[landIdx];
+    var extras = "";
+    if (landIdx === 0) {
+      extras = '<circle cx="660" cy="60" r="34" fill="#fff3a6"/><circle cx="660" cy="60" r="46" fill="#fff3a6" opacity=".35"/>' +
+        flowers([[80,262,"#ff6fb5"],[150,272,"#ffc93c"],[560,268,"#b18cf0"],[620,258,"#ff6fb5"],[700,270,"#ffc93c"]]) +
+        '<path d="M40 210 a320 180 0 0 1 640 0" fill="none" stroke="#ff9fc8" stroke-width="10" opacity=".55"/>' +
+        '<path d="M40 222 a320 180 0 0 1 640 0" fill="none" stroke="#ffd35c" stroke-width="10" opacity=".55"/>' +
+        '<path d="M40 234 a320 180 0 0 1 640 0" fill="none" stroke="#7edcc0" stroke-width="10" opacity=".55"/>';
+    } else if (landIdx === 1) {
+      extras = trees([[40,"#3f9a6f"],[110,"#56b07f"],[560,"#3f9a6f"],[640,"#56b07f"],[710,"#3f9a6f"]]) +
+        '<circle cx="620" cy="70" r="26" fill="#fffbe0"/>' +
+        '<circle cx="200" cy="120" r="4" fill="#fff59a"/><circle cx="480" cy="90" r="3" fill="#fff59a"/><circle cx="530" cy="160" r="4" fill="#fff59a"/>';
+    } else if (landIdx === 2) {
+      extras = crystals([[60,"#9ff0ff"],[130,"#ffb3e6"],[580,"#c9a8ff"],[660,"#9ff0ff"],[720,"#ffb3e6"]]) +
+        '<path d="M0 0 L760 0 L760 40 L700 70 L640 30 L560 80 L480 30 L400 60 L320 25 L240 75 L160 30 L80 65 L0 30 Z" fill="#4b3b82"/>';
+    } else if (landIdx === 3) {
+      extras = '<path d="M-20 250 L140 60 L300 250 Z" fill="#c7dcf5"/><path d="M90 120 L140 60 L190 120 L165 110 L140 128 L115 110 Z" fill="#fff"/>' +
+        '<path d="M470 250 L630 40 L790 250 Z" fill="#b8cff0"/><path d="M580 105 L630 40 L680 105 L655 95 L630 115 L605 95 Z" fill="#fff"/>' +
+        '<ellipse cx="300" cy="80" rx="60" ry="18" fill="#fff"/><ellipse cx="520" cy="130" rx="50" ry="14" fill="#fff"/>';
+    } else {
+      extras = '<rect x="590" y="40" width="70" height="210" fill="#4a3060"/><path d="M580 44 L625 -6 L670 44 Z" fill="#d9486f"/>' +
+        '<rect x="612" y="80" width="24" height="32" rx="12" fill="#ffd35c"/><rect x="612" y="150" width="24" height="32" rx="12" fill="#ffd35c" opacity=".6"/>' +
+        '<path d="M20 250 q30 -60 60 -10 q20 -50 50 0 q30 -70 60 0" fill="none" stroke="#3a2548" stroke-width="8" stroke-linecap="round"/>' +
+        '<path d="M470 250 q30 -60 60 -10 q20 -50 50 0" fill="none" stroke="#3a2548" stroke-width="8" stroke-linecap="round"/>' +
+        '<circle cx="120" cy="60" r="3" fill="#fff"/><circle cx="260" cy="40" r="2" fill="#fff"/><circle cx="420" cy="70" r="2.5" fill="#fff"/>';
+    }
+    return '<svg class="art" viewBox="0 0 760 332" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Princess Akira in ' + L.name + '">' +
+      '<defs><linearGradient id="sky' + landIdx + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + L.sky[0] + '"/><stop offset="1" stop-color="' + L.sky[1] + '"/></linearGradient></defs>' +
+      '<rect width="760" height="332" fill="url(#sky' + landIdx + ')"/>' + extras +
+      '<path d="M0 250 Q190 215 380 245 T760 238 V332 H0 Z" fill="' + L.ground + '"/>' +
+      '<path d="M0 285 Q200 262 400 282 T760 276 V332 H0 Z" fill="' + L.ground2 + '"/>' +
+      '<g transform="translate(270 104) scale(1.1)"><g class="bob">' + akiraSVG(200) + '</g></g>' +
+      '</svg>';
+  }
+  function flowers(list) {
+    return list.map(function (f) {
+      return '<g transform="translate(' + f[0] + ' ' + f[1] + ')"><circle r="7" cx="-7" fill="' + f[2] + '"/><circle r="7" cx="7" fill="' + f[2] + '"/><circle r="7" cy="-7" fill="' + f[2] + '"/><circle r="7" cy="7" fill="' + f[2] + '"/><circle r="5" fill="#fff6c2"/></g>';
+    }).join("");
+  }
+  function trees(list) {
+    return list.map(function (t) {
+      return '<rect x="' + (t[0] - 6) + '" y="170" width="12" height="80" fill="#7a5a44"/><circle cx="' + t[0] + '" cy="150" r="42" fill="' + t[1] + '"/><circle cx="' + (t[0] - 20) + '" cy="175" r="28" fill="' + t[1] + '"/><circle cx="' + (t[0] + 22) + '" cy="172" r="30" fill="' + t[1] + '"/>';
+    }).join("");
+  }
+  function crystals(list) {
+    return list.map(function (c) {
+      var x = c[0];
+      return '<path d="M' + (x - 18) + ' 250 L' + (x - 10) + ' 170 L' + x + ' 150 L' + (x + 10) + ' 170 L' + (x + 18) + ' 250 Z" fill="' + c[1] + '" opacity=".9"/><path d="M' + x + ' 150 L' + x + ' 250" stroke="#fff" stroke-width="3" opacity=".6"/>';
+    }).join("");
+  }
+
+  // ---------- State ----------
+  var SAVE_KEY = "akira-quest-v1";
+  var state = fresh();
+  function fresh() { return { phase: "title", i: 0, leagues: START_LEAGUES, good: 0, bad: 0, picks: [], order: null }; }
+  function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch (e) {} }
+  function load() {
+    try { var s = JSON.parse(localStorage.getItem(SAVE_KEY) || "null"); if (s && typeof s.i === "number") return s; } catch (e) {}
+    return null;
+  }
+
+  var app = document.getElementById("app");
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+  function shuffledOrder(n) {
+    var a = []; for (var k = 0; k < n; k++) a.push(k);
+    for (var j = a.length - 1; j > 0; j--) { var r = Math.floor(Math.random() * (j + 1)); var t = a[j]; a[j] = a[r]; a[r] = t; }
+    return a;
+  }
+
+  // ---------- Views ----------
+  function hud() {
+    var total = SCENES.length;
+    var scene = SCENES[Math.min(state.i, total - 1)];
+    var maxShown = 30;
+    var pos = 100 - Math.max(0, Math.min(state.leagues, maxShown)) / maxShown * 92 - 4;
+    var distText = state.leagues <= 0
+      ? "<b>The King is within reach!</b> Keep making good choices."
+      : "The King is <b>" + state.leagues + "</b> " + (state.leagues === 1 ? "league" : "leagues") + " away";
+    return '<section class="hud" aria-label="Quest progress">' +
+      '<div class="hud-top"><span class="land">' + esc(LANDS[scene.land].name) + '</span>' +
+      '<span class="page">Page ' + Math.min(state.i + 1, total) + ' of ' + total + '</span></div>' +
+      '<div class="track-label"><span>Far away</span><span>The King</span></div>' +
+      '<div class="track" role="img" aria-label="' + (state.leagues <= 0 ? "The King is within reach" : state.leagues + " leagues from the King") + '">' +
+      '<div class="me" style="left:' + pos + '%">' + akiraSVG(38) + '</div><span class="king">👑</span></div>' +
+      '<div class="dist" aria-live="polite">' + distText + '</div></section>';
+  }
+
+  function renderTitle() {
+    var saved = load();
+    var canResume = saved && saved.phase !== "title" && saved.phase !== "end";
+    app.innerHTML =
+      '<article class="card fade-in">' + sceneArt(0) +
+      '<div class="card-body">' +
+      '<div class="title-hero"><span class="kicker">A choose-your-path adventure</span>' +
+      '<h1>Princess Akira <em>and the Missing King</em></h1></div>' +
+      '<p class="story">The King of Harmony Hills has vanished! His naughty sons, <strong>B and B</strong>, have whisked him away to their secret tower. Only one pony can bring him home: brave Princess Akira.</p>' +
+      '<div class="howto"><p><strong>How to play:</strong> On every page, you choose what Akira does. There are ' + SCENES.length + ' choices on the way to the tower.</p>' +
+      '<div class="legend"><span class="pill good">Kind, brave or wise: ' + STEP_CLOSER + ' leagues closer</span><span class="pill bad">Unwise: ' + STEP_AWAY + ' league further away</span></div>' +
+      '<p>The King starts <strong>' + START_LEAGUES + ' leagues</strong> away. Reach him by the last page to save him!</p></div>' +
+      '<div class="btn-row"><button class="btn" id="start">' + (canResume ? "Start again" : "Begin the quest") + '</button>' +
+      (canResume ? '<button class="btn ghost" id="resume">Carry on from page ' + (saved.i + 1) + '</button>' : '') + '</div>' +
+      '<details class="grownups"><summary>For grown-ups: what the choices explore</summary><ul>' +
+      '<li>Telling trusted adults about scary secrets</li><li>Needs vs wants</li><li>The bystander effect</li><li>Checking facts vs rumours</li><li>Delayed gratification</li><li>Honesty and owning mistakes</li><li>Calming fear with breathing</li><li>Including others</li><li>Growth mindset and self-talk</li><li>Generosity</li><li>Cheating vs learning</li><li>Anger and forgiveness</li><li>Respecting others’ property</li><li>Compassion for opponents</li><li>Teamwork and giving credit</li><li>Changing plans (sunk cost)</li><li>Keeping promises</li><li>Fair play</li><li>Spotting flattery and manipulation</li><li>People before things</li><li>Naming jealousy</li><li>Asking for help</li><li>Rest and self-care</li><li>Kind honesty and loyalty</li><li>Empathy for grumpy people</li><li>Using power responsibly</li><li>Breaking big goals into steps</li><li>Understanding why people act out</li><li>Consequences with a chance to change</li></ul>' +
+      '<p class="muted" style="margin-top:8px">Choices are shuffled every time, so the kind answer is never always in the same spot.</p></details>' +
+      '</div></article>';
+    document.getElementById("start").onclick = function () { state = fresh(); state.phase = "scene"; save(); render(); };
+    if (canResume) document.getElementById("resume").onclick = function () { state = saved; render(); };
+  }
+
+  function renderScene() {
+    var s = SCENES[state.i];
+    if (!state.order || state.order.length !== s.choices.length) { state.order = shuffledOrder(s.choices.length); save(); }
+    var letters = "ABC";
+    var html = hud() +
+      '<article class="card fade-in">' + sceneArt(s.land) +
+      '<div class="card-body"><span class="kicker">Chapter ' + (state.i + 1) + '</span>' +
+      '<h2>' + esc(s.title) + '</h2>' +
+      s.text.map(function (p) { return '<p class="story">' + esc(p) + '</p>'; }).join("") +
+      speakBtn() +
+      '<p class="ask">' + esc(s.ask) + '</p><div class="choices">' +
+      state.order.map(function (ci, n) {
+        return '<button class="choice" data-c="' + ci + '"><span class="letter">' + letters[n] + '</span><span>' + esc(s.choices[ci].t) + '</span></button>';
+      }).join("") + '</div></div></article>';
+    app.innerHTML = html;
+    Array.prototype.forEach.call(app.querySelectorAll(".choice"), function (b) {
+      b.onclick = function (ev) { choose(parseInt(b.getAttribute("data-c"), 10), ev); };
+    });
+    wireSpeak(function () { return s.title + ". " + s.text.join(" ") + " " + s.ask + " " + state.order.map(function (ci, n) { return letters[n] + ". " + s.choices[ci].t; }).join(" "); });
+  }
+
+  function choose(ci, ev) {
+    var s = SCENES[state.i], c = s.choices[ci];
+    if (c.ok) { state.good++; state.leagues -= STEP_CLOSER; } else { state.bad++; state.leagues += STEP_AWAY; }
+    state.picks.push({ i: state.i, c: ci });
+    state.phase = "outcome";
+    save();
+    stopSpeak();
+    render();
+    if (c.ok) sparkle(ev);
+  }
+
+  function renderOutcome() {
+    var last = state.picks[state.picks.length - 1];
+    var s = SCENES[last.i], c = s.choices[last.c];
+    var isLast = last.i === SCENES.length - 1;
+    var html = hud() +
+      '<article class="card fade-in">' + sceneArt(s.land) +
+      '<div class="card-body"><span class="kicker">Chapter ' + (last.i + 1) + '</span><h2>' + esc(s.title) + '</h2>' +
+      '<div class="result ' + (c.ok ? "good" : "bad") + '">' +
+      '<h3>' + (c.ok ? "Closer to the King! (" + STEP_CLOSER + " leagues)" : "Oh no! B and B carry the King further away (" + STEP_AWAY + " league)") + '</h3>' +
+      '<p class="picked">You chose: ' + esc(c.t) + '</p>' +
+      '<p class="story">' + esc(c.r) + '</p>' +
+      '<p class="wisdom"><span>Akira’s wisdom</span>' + esc(c.w) + '</p></div>' +
+      speakBtn() +
+      '<div class="btn-row"><button class="btn" id="next">' + (isLast ? "See how the story ends" : "Turn the page") + '</button></div>' +
+      '</div></article>';
+    app.innerHTML = html;
+    document.getElementById("next").onclick = function () {
+      stopSpeak();
+      if (isLast) { state.phase = "end"; } else { state.i++; state.order = null; state.phase = "scene"; }
+      save(); render(); window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    document.getElementById("next").focus({ preventScroll: true });
+    wireSpeak(function () { return c.r + " Akira's wisdom: " + c.w; });
+  }
+
+  function renderEnd() {
+    var won = state.leagues <= 0;
+    var finalPick = state.picks[state.picks.length - 1];
+    var forgave = finalPick && SCENES[finalPick.i].choices[finalPick.c].ok;
+    var title, story, art = won ? 4 : 3;
+    if (won && forgave) {
+      title = "Happily Ever Harmony";
+      story = ["Princess Akira rides home with the King beside her, and B and B trotting behind, carrying a big basket of apology cupcakes.", "That night there is a feast in the Great Hall. Clover and her mum, Grumbletoll, Marlo, Pip, Flit and even Smoulder the dragon are all invited. B and B fix Farmer Haybale's fence the very next morning.", "The King raises his cup. “To Akira, who saved a king with kindness, and saved a family with forgiveness.” And everyone cheers."];
+    } else if (won) {
+      title = "The King Comes Home";
+      story = ["Princess Akira rides home with the King, and the whole kingdom cheers! B and B are led away to the dungeon.", "That night, the King tucks Akira in. “You were so brave,” he says. “But I miss your brothers. A kingdom is strongest when people get a chance to put things right.”", "Maybe tomorrow, Akira thinks, she'll visit them and hear their side of the story. Can you find the happiest ending?"];
+    } else {
+      title = "So Close, Brave Princess";
+      story = ["Akira bursts into the tower room just as B and B's thorn-cloud floats away through the window, carrying the King off towards the Misty Isles.", "“We'll come back when we feel like it!” Big B calls.", "The King waves bravely. “I believe in you, Akira!” Every hero has quests that don't go to plan. The good news? You can try again, and this time you know so much more."];
+    }
+    var total = SCENES.length;
+    var badge = state.good >= 30 ? ["🌟", "Heart of Starlight", "Almost every choice was kind, brave and wise!"]
+      : state.good >= 24 ? ["🌈", "Rainbow Hero", "A true hero of Harmony Hills."]
+      : state.good >= 15 ? ["🦄", "Brave Helper", "You're learning the ways of a great princess."]
+      : ["🌱", "Growing Legend", "Every quest makes you wiser. Try again!"];
+    var learned = state.picks.filter(function (p) { return SCENES[p.i].choices[p.c].ok; })
+      .map(function (p) { return SCENES[p.i].choices[p.c].w; });
+    var missed = state.picks.filter(function (p) { return !SCENES[p.i].choices[p.c].ok; })
+      .map(function (p) { return SCENES[p.i].title; });
+
+    app.innerHTML =
+      '<article class="card fade-in">' + sceneArt(art) +
+      '<div class="card-body"><span class="kicker">' + (won ? "The King is saved!" : "The King got away, this time") + '</span>' +
+      '<h2>' + title + '</h2>' +
+      story.map(function (p) { return '<p class="story">' + esc(p) + '</p>'; }).join("") +
+      '<div class="badge"><span class="medal" aria-hidden="true">' + badge[0] + '</span><strong>' + badge[1] + '</strong><span>' + badge[2] + '</span></div>' +
+      '<div class="stats">' +
+      '<div class="stat"><b>' + state.good + '/' + total + '</b><span>wise choices</span></div>' +
+      '<div class="stat"><b>' + state.bad + '</b><span>setbacks</span></div>' +
+      '<div class="stat"><b>' + (won ? "0" : state.leagues) + '</b><span>leagues left</span></div></div>' +
+      (won ? "" : '<p class="muted">You needed to reach 0 leagues by the last page. Each wise choice brings you ' + STEP_CLOSER + ' leagues closer.</p>') +
+      (learned.length ? '<details open><summary><strong>Wisdom Akira collected (' + learned.length + ')</strong></summary><ul class="lessons">' + learned.map(function (w) { return '<li>' + esc(w) + '</li>'; }).join("") + '</ul></details>' : "") +
+      (missed.length ? '<details><summary><strong>Pages to try differently next time (' + missed.length + ')</strong></summary><ul class="lessons">' + missed.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join("") + '</ul></details>' : "") +
+      '<div class="btn-row"><button class="btn" id="again">Play again</button><button class="btn ghost" id="home">Back to the start</button></div>' +
+      '</div></article>';
+    document.getElementById("again").onclick = function () { state = fresh(); state.phase = "scene"; save(); render(); window.scrollTo({ top: 0 }); };
+    document.getElementById("home").onclick = function () { state = fresh(); save(); render(); window.scrollTo({ top: 0 }); };
+    if (won) setTimeout(function () { sparkle(null, 40); }, 300);
+  }
+
+  // ---------- Read aloud ----------
+  var canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
+  function speakBtn() { return canSpeak ? '<button class="speak" id="speak">🔊 Read it to me</button>' : ""; }
+  function wireSpeak(getText) {
+    var b = document.getElementById("speak");
+    if (!b) return;
+    b.onclick = function () {
+      if (window.speechSynthesis.speaking) { stopSpeak(); b.textContent = "🔊 Read it to me"; return; }
+      var u = new SpeechSynthesisUtterance(getText().replace(/“|”/g, ""));
+      u.rate = 0.95; u.pitch = 1.1;
+      u.onend = function () { b.textContent = "🔊 Read it to me"; };
+      window.speechSynthesis.speak(u);
+      b.textContent = "⏹ Stop reading";
+    };
+  }
+  function stopSpeak() { try { if (canSpeak) window.speechSynthesis.cancel(); } catch (e) {} }
+
+  // ---------- Sparkles ----------
+  function sparkle(ev, count) {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var x = ev && ev.clientX ? ev.clientX : window.innerWidth / 2;
+    var y = ev && ev.clientY ? ev.clientY : window.innerHeight / 3;
+    var glyphs = ["✨", "💖", "⭐", "🌸", "🦄"];
+    for (var k = 0; k < (count || 18); k++) {
+      var sp = document.createElement("span");
+      sp.className = "spark";
+      sp.textContent = glyphs[k % glyphs.length];
+      sp.style.left = x + "px"; sp.style.top = y + "px";
+      sp.style.setProperty("--dx", (Math.random() * 320 - 160) + "px");
+      sp.style.setProperty("--dy", (Math.random() * -260 + 40) + "px");
+      document.body.appendChild(sp);
+      setTimeout(function (el) { return function () { el.remove(); }; }(sp), 1300);
+    }
+  }
+
+  function render() {
+    if (state.phase === "scene") renderScene();
+    else if (state.phase === "outcome") renderOutcome();
+    else if (state.phase === "end") renderEnd();
+    else renderTitle();
+  }
+
+  // Exposed for testing the odds without playing 33 pages.
+  window.AKIRA = { SCENES: SCENES, START_LEAGUES: START_LEAGUES, STEP_CLOSER: STEP_CLOSER, STEP_AWAY: STEP_AWAY };
+  render();
+})();
+</script>
+</body>
+</html>
